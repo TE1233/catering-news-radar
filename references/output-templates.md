@@ -23,19 +23,17 @@ Use for ad hoc requests such as "scan the last 24 hours" or "what changed this w
 Recommended structure:
 
 ```markdown
-# 餐饮提莫 - 探探路
+**餐饮提莫-探探路**
 时间范围：2026-03-14 至 2026-03-15
 覆盖范围：中国餐饮行业 / 连锁咖啡 / 外卖与本地生活平台
 
 - [P1] **标题**
   影响判断：一句话说明对品牌、商家、平台或投资人的影响。
   来源：媒体或官方渠道，发布时间。
-  链接：URL
 
 - [P2] **标题**
   影响判断：...
   来源：...
-  链接：URL
 ```
 
 ## Morning Push
@@ -45,19 +43,17 @@ Use for recurring delivery when the audience wants the most important overnight 
 Recommended structure:
 
 ```markdown
-# 餐饮提莫 - 探探路
+**餐饮提莫-探探路**
 日期：2026-03-15
 覆盖时间：过去24小时
 
 - [P1] **标题**
   影响判断：...
   来源：...
-  链接：URL
 
 - [P2] **标题**
   影响判断：...
   来源：...
-  链接：URL
 ```
 
 ## Evening Brief
@@ -67,19 +63,17 @@ Use for end-of-day wrap-ups with a quick "what changed today" angle.
 Recommended structure:
 
 ```markdown
-# 餐饮提莫 - 探探路
+**餐饮提莫-探探路**
 日期：2026-03-15
 覆盖时间：过去24小时
 
 - [P1] **标题**
   影响判断：...
   来源：...
-  链接：URL
 
 - [P2] **标题**
   影响判断：...
   来源：...
-  链接：URL
 ```
 
 ## Weekly Sector Watch
@@ -89,19 +83,17 @@ Use for category or investor-style roundups.
 Recommended structure:
 
 ```markdown
-# 餐饮提莫 - 探探路
+**餐饮提莫-探探路**
 统计周期截至：2026-03-15
 赛道范围：茶饮 / 咖啡 / 快餐 / 火锅 / 烘焙
 
 - [P1] **标题**
   影响判断：...
   来源：...
-  链接：URL
 
 - [P2] **标题**
   影响判断：...
   来源：...
-  链接：URL
 ```
 
 ## Writing Rules
@@ -116,4 +108,5 @@ Recommended structure:
 - Bold the event title in every item.
 - Prefer Chinese industry wording over literal translation.
 - When useful, append one short `影响判断` sentence for merchants, brands, or investors.
-- For user-facing Chinese outputs, prefer `餐饮提莫 - 探探路` as the product title and keep the English skill id out of the visible copy unless the user asks for installation details.
+- For user-facing Chinese outputs, prefer `**餐饮提莫-探探路**` as the visible product title and keep the English skill id out of the visible copy unless the user asks for installation details.
+- Do not show raw links by default. Only include links when the user explicitly asks for them or when links are required for the task.

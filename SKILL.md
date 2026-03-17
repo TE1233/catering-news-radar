@@ -160,7 +160,6 @@ Use [references/output-templates.md](./references/output-templates.md) for the r
 - Priority labels on items.
 - A one-line "why it matters" angle for restaurant operators, investors, founders, or market watchers.
 - Source attribution for every item.
-- A link for every item when available.
 
 Prefer concise, scannable summaries. Default to a compact radar list rather than a long brief with extra framing. Avoid long article-style prose unless the user asks for a deep dive.
 
@@ -178,6 +177,9 @@ When writing in Chinese:
   - `P3`: background reference
 - Turn "Why it matters" into a natural Chinese business label such as impact judgment or why this matters.
 - Turn "Watchlist" into a natural Chinese label such as watchlist or continued tracking.
+- Default the visible title to `**餐饮提莫-探探路**`.
+- Bold each item title.
+- Do not show raw links by default; provide links only when the user explicitly asks for them or when links are necessary for the task.
 
 Use explicit absolute dates in a Chinese-friendly form, for example `2026-03-15` or `2026/03/15`. If the user says today or this week, restate the exact date range.
 
@@ -221,6 +223,8 @@ This skill is a strong fit for requests like:
 - "Track the latest chain-brand openings and financing news."
 - "Watch Meituan, Douyin local services, and delivery policy changes."
 - "Push a daily restaurant radar with broad sources and strict freshness."
+- "餐饮快报"
+- "餐饮闪报"
 
 ## Invocation Modes
 
@@ -264,6 +268,7 @@ Use these rules as the default operating contract for the skill:
 - The skill should run immediately when the user invokes `$restaurant-news-radar`.
 - Manual trigger does not require any scheduler or cron setup.
 - Default manual scope is China-first and past 24 hours unless the user asks for a different window or market.
+- Recognize common Chinese manual aliases including `餐饮资讯`, `来一份餐饮资讯`, `餐饮雷达`, `餐饮动态`, `今天餐饮有什么新闻`, `餐饮快报`, and `餐饮闪报`.
 
 ### Scheduled trigger
 
