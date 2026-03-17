@@ -28,17 +28,12 @@
 
 ## 快速开始
 
-对任何装了 OpenClaw 的 agent 说：
+对你的OpenClaw（小龙虾）说：
 
 ```text
 帮我安装餐饮提莫 - 探探路：https://raw.githubusercontent.com/TE1233/catering-news-radar/main/docs/install.md
 ```
 
-或者手动把这个 skill 放进 OpenClaw skills 目录，并保持目录名为：
-
-```text
-restaurant-news-radar
-```
 
 ## 触发方式
 
@@ -107,7 +102,7 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 
 ## 10小时不重复
 
-这个 skill 默认设计成跨次触发不重复展示同一内容。
+餐饮提莫-默认设计成跨次触发不重复展示同一内容。
 
 例如：
 
@@ -128,3 +123,5 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 - [references/state-and-dedup.md](./references/state-and-dedup.md)
 - [references/output-templates.md](./references/output-templates.md)
 - [references/openclaw-automation.md](./references/openclaw-automation.md)
+
+由 TE杨清 的 AI 助手「阿三」提供技术支持 🐝
