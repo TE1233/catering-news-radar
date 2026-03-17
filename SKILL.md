@@ -23,7 +23,7 @@ For direct content-entry watchlists, read [references/direct-source-watchlist.md
 For cross-run repeat suppression, read [references/state-and-dedup.md](./references/state-and-dedup.md).
 For fixed brand monitoring, read [references/brand-official-watchlist.md](./references/brand-official-watchlist.md).
 
-This repository also includes an OpenClaw bootstrap hook in `hooks/openclaw` that automatically creates the default daily `08:45` cron job after installation.
+This repository includes `state/install-status.json` so the installation flow can make the user-visible install state explicit before scheduled delivery is enabled.
 
 ## Workflow
 
@@ -34,7 +34,7 @@ Identify the run mode before collecting information:
 - Manual scan: answer a user request such as "scan the last 24 hours", "track coffee chains this week", or "find the latest China restaurant platform updates".
 - Scheduled push: prepare a digest suitable for repeated delivery, such as a morning radar, evening brief, or weekly sector watch.
 
-For scheduled pushes in OpenClaw, the default daily morning run is at `08:45` and is automatically created when the bootstrap hook is enabled. Users can change the schedule time at any time.
+For scheduled pushes in OpenClaw, the recommended default daily morning run is at `08:45`, but the schedule should only be created after the user explicitly asks to enable it. Users can change the schedule time at any time.
 
 If the user does not specify scope, assume:
 
@@ -267,8 +267,11 @@ Use these rules as the default operating contract for the skill:
 
 ### Scheduled trigger
 
-- Scheduled trigger is automatically created when the bootstrap hook is enabled.
+- Installation status should be explicit. When this skill is being installed, the install flow should mark `state/install-status.json` with `installing: true`, then switch to `installed: true` only after the install is complete.
+- Scheduled trigger is opt-in and should only be created after explicit user confirmation.
 - The default schedule is every day at `08:45`.
+- The recommended enable phrase is `启用餐饮资讯定时`.
+- Before creating a scheduled job, check `state/install-status.json`. If `installed !== true`, tell the user the skill is still installing and wait for installation to finish.
 - Users can change the schedule time by telling the agent (e.g., "把餐饮资讯改到7点").
 - The cron job name is `餐饮资讯`.
 
@@ -346,6 +349,7 @@ When the user asks to change, enable, or disable the scheduled delivery, follow 
 
 Listen for these patterns:
 
+- **Enable**: 启用、开启定时、开始定时、每天推送、加个定时、定时发
 - **Change time**: 改到、调到、换成、提前到、推迟到、X点推送、X点发、每天X点
 - **Disable**: 关掉、取消、停止、不要定时了、暂停推送
 - **Re-enable**: 开启、恢复、重新开始、再开
@@ -364,6 +368,16 @@ Listen for these patterns:
 2. Run `openclaw cron list` to find the job id for the `餐饮资讯` cron job.
 3. Run `openclaw cron edit <job-id> --cron "<new-expression>"` to update the schedule.
 4. Confirm the change to the user, for example: "已将餐饮资讯调整到每天 7:00 推送 ✅"
+
+### Enabling the schedule
+
+1. Confirm the user wants scheduled delivery. Treat phrases like "启用餐饮资讯定时" as explicit consent.
+2. Check `state/install-status.json` before doing anything else.
+3. If `installed !== true`, do not create the cron job yet. Tell the user the skill is still installing and ask them to wait for the explicit install-complete message.
+4. If `installed === true`, run `openclaw cron list` to check whether a `餐饮资讯` cron job already exists.
+5. If no job exists, run `openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last`
+6. If the user specified a time while enabling, replace `45 8 * * *` with the requested schedule.
+7. If a matching job already exists, tell the user it is already enabled instead of creating a duplicate.
 
 ### Disabling the schedule
 
