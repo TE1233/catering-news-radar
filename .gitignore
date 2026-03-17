@@ -1,0 +1,13 @@
+# 运行时状态文件（保留初始模板，忽略运行产生的变化）
+state/recent-items.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

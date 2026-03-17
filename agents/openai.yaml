@@ -1,0 +1,4 @@
+interface:
+  display_name: "餐饮提莫 - 探探路"
+  short_description: "Track timely, broad-source restaurant signals."
+  default_prompt: "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links."
