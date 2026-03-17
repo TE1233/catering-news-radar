@@ -6,6 +6,26 @@
 帮我安装餐饮资讯雷达：https://raw.githubusercontent.com/TE1233/catering-news-radar/main/docs/install.md
 ```
 
+## 安装执行要求
+
+安装时请严格按下面的约束执行：
+
+- 把整个 skill 仓库内容原样复制到 OpenClaw skill 目录，不要根据文档“重新生成”文件内容。
+- 目录名必须保持为 `restaurant-news-radar`。
+- 所有文本文件必须保持为 `UTF-8` 编码，不要转成 ANSI、GBK 或其他本地编码。
+- 特别是 `agents/openai.yaml` 必须保持为合法 YAML，不能截断，也不能丢失引号。
+- 如果目标目录里已经有同名 skill，先完整替换旧目录，再启用或重载。
+
+推荐的安装结果应该是直接复制这些原始文件：
+
+- `SKILL.md`
+- `README.md`
+- `agents/openai.yaml`
+- `hooks/openclaw/HOOK.md`
+- `hooks/openclaw/handler.ts`
+- `references/*`
+- `state/recent-items.json`
+
 ## 安装目标
 
 安装这个 skill，并保持：
@@ -25,6 +45,25 @@
 - 手动触发：可直接运行
 - 定时任务：安装后自动创建每日 08:45 推送
 - 用户可通过自然语言修改推送时间、关闭或重新开启定时
+
+## 最低自检
+
+安装完成后，至少检查下面两项：
+
+1. `agents/openai.yaml` 仍然是合法 YAML，并且包含：
+
+```yaml
+interface:
+  display_name: "餐饮提莫 - 探探路"
+```
+
+2. `SKILL.md` 顶部 frontmatter 仍然以这三行开头：
+
+```yaml
+---
+name: restaurant-news-radar
+description:
+```
 
 ## 手动触发示例
 
