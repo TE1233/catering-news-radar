@@ -27,7 +27,7 @@
 
 ## 快速开始
 
-对你的 OpenClaw 说：
+复制下面链接发给你的OpenClaw（小龙虾） ：
 
 ```text
 帮我安装餐饮提莫 - 探探路：https://raw.githubusercontent.com/TE1233/catering-news-radar/main/docs/install.md
@@ -141,6 +141,8 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 - 晚上 `20:00` 再次触发
 - 早上那 10 条默认不再展示
 - 只有真正新增的内容，或同一事件出现重大新进展时，才会再次出现
+
+- 由 TE杨清 的 AI 助手「阿三」提供技术支持 🐝
 
 ## 核心参考文件
 
