@@ -67,7 +67,7 @@ openclaw hooks enable restaurant-radar-setup
 openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last
 ```
 
-### 修改推送时间
+### 修改定时推送时间
 
 安装后可以随时用自然语言修改：
 
@@ -79,20 +79,6 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 
 - "关掉餐饮资讯定时"
 - "重新开启餐饮资讯"
-
-## 触发规则
-
-手动触发：
-
-- 始终可用
-- 不需要先启用 cron
-- 默认扫过去 `24小时`
-
-定时触发：
-
-- 启用 bootstrap hook 后自动创建
-- 默认每天 `08:45`
-- 用户可随时修改时间
 
 共存规则：
 
