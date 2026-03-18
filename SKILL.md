@@ -31,7 +31,7 @@ This repository includes `state/install-status.json` so the installation flow ca
 
 Identify the run mode before collecting information:
 
-- Manual scan: answer a user request such as "scan the last 24 hours", "track coffee chains this week", or "find the latest China restaurant platform updates".
+- Manual scan: answer a user request such as "scan the last 24 hours", "track coffee chains from the past 3 days", or "find the latest China restaurant platform updates".
 - Scheduled push: prepare a digest suitable for repeated delivery, such as a morning radar, evening brief, or weekly sector watch.
 
 For scheduled pushes in OpenClaw, the recommended default daily morning run is at `08:45`, but the schedule should only be created after the user explicitly asks to enable it. Users can change the schedule time at any time.
@@ -49,7 +49,7 @@ Before collecting new items, load recent-output memory from `state/recent-items.
 Always prioritize current information sources over static knowledge. Do not rely on memory for "latest" requests.
 
 Search broadly across source types. Use [references/source-map.md](./references/source-map.md) to choose the right source mix for the request.
-Use [references/search-playbook.md](./references/search-playbook.md) to enforce strict time windows and layer the search from `T0` to `T2`.
+Use [references/search-playbook.md](./references/search-playbook.md) to enforce strict time windows and layer the search from `T0` to `T1`.
 Use [references/keyword-templates.md](./references/keyword-templates.md) to avoid ad hoc searching and keep coverage fast but structured.
 Use [references/direct-source-watchlist.md](./references/direct-source-watchlist.md) when the task benefits from pulling directly from known content pages rather than relying only on search.
 
@@ -69,7 +69,7 @@ Strict recency rules:
 
 1. Start with `T0`: past 24 hours only.
 2. Expand to `T1`: past 72 hours only if `T0` produces too few high-confidence items.
-3. Expand to `T2`: past 7 days only if the user asked for a weekly view or if `T0` and `T1` remain too thin.
+3. Do not expand beyond `T1`: the hard outer limit for this skill is the past 72 hours.
 4. Do not pull in older items just to fill the digest.
 5. If fresh, high-quality items are limited, say so explicitly.
 
@@ -90,7 +90,7 @@ Record concrete dates for every item. If the user uses relative language such as
 Treat recency as part of ranking:
 
 - Highest priority: same-day items, breaking updates, regulator actions, platform rule changes, food safety incidents, major brand moves.
-- Medium priority: last 2-7 days, financing, expansion plans, pricing changes, category launches, channel partnerships.
+- Medium priority: last 2-3 days, financing, expansion plans, pricing changes, category launches, channel partnerships.
 - Lower priority: older analysis pieces unless they explain why a new development matters.
 
 If a source republishes an older story, prefer the earliest credible publication date and note when later coverage is a follow-up rather than new information.
@@ -100,6 +100,7 @@ Reject stale filler:
 - Do not include an item outside the active search layer unless the user explicitly asked for background.
 - Do not treat a newly published rewrite of an older event as fresh news.
 - If an article says "recently" or "these days" without a concrete date, verify the underlying event date before including it.
+- Do not include an event whose underlying fact date is older than 72 hours in the default digest, even if the article itself was published today.
 
 ### 4. Deduplicate before summarizing
 
@@ -115,8 +116,8 @@ When several outlets cover the same event, cite one primary source and optionall
 Apply cross-run suppression for repeated manual or scheduled scans:
 
 - Keep a recent-output memory for previously shown items.
-- Default no-repeat window: `10 hours`
-- If an item was already shown within the last `10 hours`, do not show it again.
+- Default repeat-friendly window: `10 hours`
+- If an item was already shown within the last `10 hours`, it may appear again. Suppress it only after it stays materially unchanged for more than `10 hours`.
 - Match repeats by primary link first, then by normalized title or event identity when links differ across rewrites.
 - Allow a repeat only when there is a material new development, such as regulator action, official response, financing close, reopening, expanded recall scope, or a concrete new operating impact.
 - If a repeated event is allowed back in because it materially advanced, summarize the new development rather than reusing the earlier framing.
@@ -125,7 +126,7 @@ Operational rule:
 
 1. Load `state/recent-items.json` before finalizing the candidate list.
 2. Compare each candidate against recent items using canonical link first, then normalized title.
-3. Suppress any candidate shown within the last `10 hours` unless it materially advanced.
+3. Keep candidates eligible when they were shown within the last `10 hours`. Suppress a candidate only after it has stayed materially unchanged for more than `10 hours`.
 4. After producing the final output, append or refresh the surviving items in `state/recent-items.json`.
 5. Remove expired entries older than the suppression window plus a small cleanup buffer.
 
@@ -237,7 +238,7 @@ Use when the user asks for an immediate scan, deep dive, or ad hoc watchlist. Ma
 Typical manual prompts:
 
 - "Use $restaurant-news-radar to scan the latest restaurant news from the past 24 hours in China."
-- "Use $restaurant-news-radar to track coffee and tea chain developments this week."
+- "Use $restaurant-news-radar to track coffee and tea chain developments from the past 3 days."
 
 Recommended default manual routing:
 
@@ -277,6 +278,9 @@ Use these rules as the default operating contract for the skill:
 - The default schedule is every day at `08:45`.
 - The recommended enable phrase is `启用餐饮资讯定时`.
 - Before creating a scheduled job, check `state/install-status.json`. If `installed !== true`, tell the user the skill is still installing and wait for installation to finish.
+- Before creating a scheduled job, inspect the current session route. Prefer `deliveryContext.channel` / `deliveryContext.to` / `deliveryContext.accountId`, then fall back to `lastChannel` / `lastTo`.
+- If the user enables the schedule from Feishu, persist the explicit Feishu route into the cron delivery fields so the digest goes back to the same Feishu conversation.
+- Do not rely on `channel: last` alone when no concrete target is available; if routing is ambiguous, ask the user to confirm the destination or create the job with `delivery.mode = "none"`.
 - Users can change the schedule time by telling the agent (e.g., "把餐饮资讯改到7点").
 - The cron job name is `餐饮资讯`.
 
@@ -325,7 +329,7 @@ Recommended fields per item:
 Behavior:
 
 - Before finalizing output, compare candidate items against recent-output memory.
-- Skip any item shown within the last `10 hours`.
+- Do not suppress an item solely because it was shown within the last `10 hours`.
 - Update memory after a successful manual or scheduled run.
 - Expire old entries automatically once they fall outside the suppression window plus a small buffer.
 
@@ -338,11 +342,11 @@ Default file:
 Read only what is needed:
 
 - Read [references/source-map.md](./references/source-map.md) when choosing where to search and how to broaden source coverage.
-- Read [references/search-playbook.md](./references/search-playbook.md) when executing a latest-news scan with strict time windows and stepwise expansion from 24 hours to 72 hours to 7 days.
+- Read [references/search-playbook.md](./references/search-playbook.md) when executing a latest-news scan with strict time windows and stepwise expansion from 24 hours to 72 hours.
 - Read [references/keyword-templates.md](./references/keyword-templates.md) when you need bucketed, reusable query patterns that balance speed and coverage.
 - Read [references/direct-source-watchlist.md](./references/direct-source-watchlist.md) when you want directly fetchable content-entry pages for restaurant, policy, platform, property, and retail signals.
 - Read [references/brand-official-watchlist.md](./references/brand-official-watchlist.md) when you want a fixed watchlist of brand-official sources for major restaurant, tea, coffee, and hotpot operators.
-- Read [references/state-and-dedup.md](./references/state-and-dedup.md) when the runtime supports local persistence and you want a `10-hour` no-repeat window across manual and scheduled runs.
+- Read [references/state-and-dedup.md](./references/state-and-dedup.md) when the runtime supports local persistence and you want a `10-hour` repeat-friendly window across manual and scheduled runs.
 - Read [references/output-templates.md](./references/output-templates.md) when formatting a manual scan, morning push, evening brief, weekly watch, or a niche category report.
 - Read [references/openclaw-automation.md](./references/openclaw-automation.md) when enabling or changing the daily cron schedule, or explaining how users can manually trigger the skill alongside scheduled runs.
 
@@ -379,10 +383,12 @@ Listen for these patterns:
 1. Confirm the user wants scheduled delivery. Treat phrases like "启用餐饮资讯定时" as explicit consent.
 2. Check `state/install-status.json` before doing anything else.
 3. If `installed !== true`, do not create the cron job yet. Tell the user the skill is still installing and ask them to wait for the explicit install-complete message.
-4. If `installed === true`, run `openclaw cron list` to check whether a `餐饮资讯` cron job already exists.
-5. If no job exists, run `openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last`
-6. If the user specified a time while enabling, replace `45 8 * * *` with the requested schedule.
-7. If a matching job already exists, tell the user it is already enabled instead of creating a duplicate.
+4. If `installed === true`, inspect the current session route and resolve explicit delivery fields from the current conversation: `channel`, `to`, and `accountId` when available.
+5. Run `openclaw cron list` to check whether a `餐饮资讯` cron job already exists.
+6. If no job exists and you have a concrete delivery route, run `openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"`
+7. If no job exists but delivery routing is ambiguous, do not rely on `last` alone. Ask the user to confirm the destination, or create the job with `--no-deliver`.
+8. If the user specified a time while enabling, replace `45 8 * * *` with the requested schedule.
+9. If a matching job already exists, tell the user it is already enabled instead of creating a duplicate.
 
 ### Disabling the schedule
 
@@ -393,15 +399,22 @@ Listen for these patterns:
 ### Re-enabling the schedule
 
 1. Run `openclaw cron list` to find the job id for the `餐饮资讯` cron job.
-2. Run `openclaw cron edit <job-id> --announce --channel last` to restore delivery.
-3. Confirm to the user: "已重新开启餐饮资讯定时推送 ✅"
+2. If the user wants the schedule active again, first resolve the current conversation route. If you have a concrete route, run `openclaw cron edit <job-id> --enable --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"`.
+3. If routing is ambiguous, ask the user to confirm where delivery should go, or re-enable with `--no-deliver`.
+4. Confirm to the user: "已重新开启餐饮资讯定时任务 ✅"
 
 ### Creating the schedule if it does not exist
 
 If the user asks for scheduled delivery but no `餐饮资讯` cron job exists, create one:
 
 ```bash
-openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last
+openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"
+```
+
+If the current conversation does not expose a concrete route target, fall back to:
+
+```bash
+openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --no-deliver
 ```
 
 Replace `45 8 * * *` with the user's preferred time if they specified one.

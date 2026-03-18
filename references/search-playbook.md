@@ -52,20 +52,6 @@ Goal:
 - Fill gaps without drifting into stale weekly coverage
 - Preserve exact dates and source attribution
 
-### T2: Past 7 days
-
-Use this only when:
-
-- the user explicitly asked for weekly or recent-trend coverage
-- T0 and T1 still do not produce enough material
-- background context is needed to explain a new development
-
-Restrictions:
-
-- Keep T2 items clearly labeled as older than the main fresh layer
-- Do not let T2 dominate a "latest news" digest
-- Use T2 mainly for context, not for padding
-
 ## Stop Conditions
 
 Stop searching within the active layer only when all are true:
@@ -76,7 +62,7 @@ Stop searching within the active layer only when all are true:
 - The result set is within the active time layer
 - All relevant core buckets have been checked at least once
 
-If these conditions are not met, expand one layer. If they are still not met at T2, state that fresh high-confidence updates are limited.
+If these conditions are not met at T0, expand once to T1. If they are still not met at T1, state that fresh high-confidence updates are limited instead of widening beyond 72 hours.
 
 Core buckets for a broad scan:
 
@@ -102,6 +88,7 @@ Apply these filters before keeping any item:
 3. Reject reposts with no new fact.
 4. Reject listicles and trend pieces unless they contain new, dated facts.
 5. Prefer exact day-level timestamps over vague wording like "recently".
+6. Reject any item whose underlying event date is older than 72 hours for the default digest, even if the write-up was published more recently.
 
 ## Source Routing by Topic
 

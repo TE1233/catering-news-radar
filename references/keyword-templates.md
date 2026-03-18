@@ -35,12 +35,6 @@ Use these by layer:
 - `this week`
 - date range terms
 
-### T2
-
-- `past 7 days`
-- `weekly`
-- `recent`
-
 For China-facing Chinese runs, naturally translate the time idea into Chinese search phrasing such as `今天`, `昨日`, `近24小时`, `近3天`, or exact dates.
 
 ## Core Buckets

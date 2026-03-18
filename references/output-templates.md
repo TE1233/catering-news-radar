@@ -18,7 +18,7 @@ Recommended Chinese labels:
 
 ## Manual Scan
 
-Use for ad hoc requests such as "scan the last 24 hours" or "what changed this week in restaurant delivery platforms?"
+Use for ad hoc requests such as "scan the last 24 hours" or "what changed in the past 3 days in restaurant delivery platforms?"
 
 Recommended structure:
 

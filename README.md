@@ -104,15 +104,23 @@ Use $restaurant-news-radar to scan the past 24 hours of restaurant industry deve
 
 - agent 先检查 `state/install-status.json`
 - 如果 `installed !== true`，就告诉你“还在安装中，请等安装完成”
-- 如果已经安装完成，再运行 `openclaw cron list` 检查是否已有同名任务
+- 如果已经安装完成，先读取当前会话的投递路由
+- 如果你是在飞书里启用，就把飞书当前会话的 `channel/to/accountId` 固化进 cron
+- 如果你是在别的聊天渠道里启用，就把那个渠道当前会话的路由固化进 cron
+- 如果没有拿到明确投递目标，再运行 `openclaw cron list` 检查是否已有同名任务
 - 如果没有，再创建默认每天 `08:45` 的 `餐饮资讯` cron
 - 如果已经存在，就明确告诉你“已启用，无需重复创建”
 
 默认创建命令是：
 
 ```bash
-openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last
+openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"
 ```
+
+如果当前会话没有明确的投递目标，不要直接用 `channel last` 硬建。更稳的是：
+
+- 让用户确认推送到哪里
+- 或先创建 `--no-deliver` 的内部定时任务
 
 如果你想一开始就指定时间，也可以直接说：
 

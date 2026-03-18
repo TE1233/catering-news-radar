@@ -65,11 +65,20 @@ Before creating the cron job, check `state/install-status.json`:
 
 - If `installed !== true`, tell the user the skill is still installing and do not create the schedule yet.
 - If `installed === true`, continue with normal schedule setup.
+- Before creating the job, resolve the current conversation route. Prefer `deliveryContext.channel`, `deliveryContext.to`, and `deliveryContext.accountId`, then fall back to `lastChannel` and `lastTo`.
+- If the user is talking to OpenClaw in Feishu, persist the explicit Feishu route into the cron delivery fields so the scheduled digest goes back to that same Feishu conversation.
+- Do not rely on `channel: "last"` alone when there is no concrete target.
 
 After the user explicitly asks to enable scheduled delivery, create the cron job with:
 
 ```bash
-openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last
+openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"
+```
+
+Fallback when current routing is unavailable:
+
+```bash
+openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --no-deliver
 ```
 
 Recommended behavior of the scheduled prompt:
@@ -77,9 +86,9 @@ Recommended behavior of the scheduled prompt:
 - Use the past 24 hours as the default time window.
 - Produce a concise Chinese radar.
 - Prioritize source breadth and freshness.
-- Include dates, links, and source attribution on every item.
+- Include dates and source attribution on every item.
 - Check all core source buckets before finalizing the digest.
-- Suppress items already shown within the last `10 hours` unless they materially advanced.
+- Allow repeats during the first `10 hours`, and suppress only items that remain materially unchanged after that window.
 
 ## Change the Scheduled Time
 
@@ -124,7 +133,13 @@ openclaw cron edit <job-id> --no-deliver
 Re-enable:
 
 ```bash
-openclaw cron edit <job-id> --announce --channel last
+openclaw cron edit <job-id> --enable --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"
+```
+
+Fallback when current routing is unavailable:
+
+```bash
+openclaw cron edit <job-id> --enable --no-deliver
 ```
 
 ## Manual Trigger
@@ -147,7 +162,7 @@ Use $restaurant-news-radar to scan the latest restaurant industry developments f
 
 Examples of manual variants:
 
-- Scan the latest coffee-chain developments this week.
+- Scan the latest coffee-chain developments from the past 3 days.
 - Produce an evening brief for delivery-platform policy updates.
 - Track tea-drink brand openings, financing, and pricing moves.
 

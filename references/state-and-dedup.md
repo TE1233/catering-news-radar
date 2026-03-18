@@ -8,9 +8,9 @@ Prevent the same item from appearing again too soon when the user manually trigg
 
 ## Default Rule
 
-- No-repeat window: `10 hours`
+- Repeat-friendly window: `10 hours`
 - Applies across manual and scheduled runs
-- Suppress previously shown items inside the window
+- Allow repeats inside the window
 - Allow a repeat only when the event materially advanced
 
 ## Recommended State Path
@@ -61,7 +61,7 @@ If a repeated item reappears because it materially advanced, rewrite the item ar
 For each manual or scheduled run:
 
 1. Load `state/recent-items.json`
-2. Filter candidate items against the `10-hour` suppression window
+2. Keep candidates eligible inside the `10-hour` window, and suppress only those that remain materially unchanged after that window
 3. Produce the final output
 4. Write surviving items back to `state/recent-items.json`
 5. Expire stale entries outside the active window

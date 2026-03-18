@@ -110,6 +110,12 @@
 
 只有在 `state/install-status.json` 里 `installed` 已经为 `true` 之后，才允许创建定时任务。
 
+创建定时任务前，还要先读取当前会话的投递路由。目标是：
+
+- 用户在飞书里启用，就推送到当前飞书会话
+- 用户在其他聊天渠道里启用，就推送到当前聊天渠道
+- 不要只写 `channel last` 然后把目标留空；要尽量把当前会话的 `channel`、`to`、`accountId` 固化到 cron 里
+
 如果用户希望开启默认定时，请让用户明确发出确认，例如：
 
 ```text
@@ -118,14 +124,22 @@
 
 收到确认后，推荐执行流程是：
 
-1. 先运行 `openclaw cron list`，检查是否已存在名为 `餐饮资讯` 的 cron 任务。
-2. 如果不存在，再执行下面的创建命令：
+1. 先读取当前会话的路由信息，优先使用当前会话可见的：
+   - `deliveryContext.channel`
+   - `deliveryContext.to`
+   - `deliveryContext.accountId`
+   - 或 `lastChannel` / `lastTo`
+2. 运行 `openclaw cron list`，检查是否已存在名为 `餐饮资讯` 的 cron 任务。
+3. 如果不存在，并且已经拿到了当前会话的明确投递目标，再执行下面这种带显式渠道目标的创建命令：
 
 ```bash
-openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, suppress items already shown in the past 10 hours unless they materially advanced, and produce a concise Chinese radar with dates, sources, and links." --announce --channel last
+openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"
 ```
 
-3. 如果已存在，就告诉用户已经启用，避免重复创建。
+4. 如果当前会话只有渠道、没有明确目标，或者当前路由信息缺失，就不要用 `--announce --channel last` 碰运气。此时应：
+   - 优先让用户确认投递位置
+   - 或退回创建一个 `--no-deliver` 的内部定时任务
+5. 如果已存在，就告诉用户已经启用，避免重复创建。
 
 如果用户在启用时已经指定时间，例如“把餐饮资讯定时开到每天 7 点”，则把 `45 8 * * *` 改成对应时间的 cron 表达式再创建。
 
