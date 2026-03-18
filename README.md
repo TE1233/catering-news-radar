@@ -10,19 +10,8 @@
 - 优先覆盖监管、平台、专业餐饮媒体、综合商业媒体、商圈渠道、品牌官方源
 - 对同一事件做去重
 - 输出简洁中文雷达
-
-## 为什么它不一样
-
-和普通“餐饮新闻摘要”相比，这个 skill 更强调：
-
-- `时效性`
-  默认按 `24小时 -> 72小时 -> 7天` 分层扩展，不拿旧闻凑数
-- `来源结构`
-  不是只搜媒体，而是按来源桶覆盖监管、平台、媒体、商圈、品牌
-- `10小时外不重复`
-  早上看过的内容，晚上再触发时默认不重复展示
-- `适合 OpenClaw`
-  支持中文关键词触发、安装完成后再按用户确认启用定时任务、用户可随时修改推送时间
+- 默认按 `24小时 -> 72小时 -> 7天` 分层扩展，不拿旧闻凑数
+- 支持中文关键词触发、安装完成后再按用户确认启用定时任务、用户可随时修改推送时间
 
 ## 快速开始
 
@@ -62,7 +51,7 @@ interface:
 - **餐饮动态**
 - **今天餐饮有什么新闻**
 
-或使用标准 skill 引用：
+或使用标准skill引用：
 
 ```text
 Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China and produce a concise Chinese radar.
@@ -70,40 +59,12 @@ Use $restaurant-news-radar to scan the past 24 hours of restaurant industry deve
 
 ### 定时推送（按用户确认启用）
 
-这个 skill 默认不会在安装后自动创建 cron。
+这个skill 默认不会在安装后自动创建 cron。
 
 只有在安装完成之后，如果你要开启每天 `08:45` 的定时推送，再对 agent 说：
 
 ```text
 启用餐饮资讯定时
-```
-
-理想行为是：
-
-- agent 先检查 `state/install-status.json`
-- 如果 `installed !== true`，就告诉你“还在安装中，请等安装完成”
-- 如果已经安装完成，先读取当前会话的投递路由
-- 如果你是在飞书里启用，就把飞书当前会话的 `channel/to/accountId` 固化进 cron
-- 如果你是在别的聊天渠道里启用，就把那个渠道当前会话的路由固化进 cron
-- 如果没有拿到明确投递目标，再运行 `openclaw cron list` 检查是否已有同名任务
-- 如果没有，再创建默认每天 `08:45` 的 `餐饮资讯` cron
-- 如果已经存在，就明确告诉你“已启用，无需重复创建”
-
-默认创建命令是：
-
-```bash
-openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated --message "Use $restaurant-news-radar to scan the past 24 hours of restaurant industry developments in China, cover regulator, platform, trade-media, brand, and property buckets, allow repeats during the first 10 hours, suppress only items that remain materially unchanged after 10 hours, and produce a concise Chinese radar with dates and sources." --announce --channel "<current-channel>" --to "<current-target>" --account "<current-account-id>"
-```
-
-如果当前会话没有明确的投递目标，不要直接用 `channel last` 硬建。更稳的是：
-
-- 让用户确认推送到哪里
-- 或先创建 `--no-deliver` 的内部定时任务
-
-如果你想一开始就指定时间，也可以直接说：
-
-```text
-把餐饮资讯定时开到每天 7 点
 ```
 
 ### 修改定时推送时间
@@ -119,22 +80,17 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 - "关掉餐饮资讯定时"
 - "重新开启餐饮资讯"
 
-共存规则：
-
-- 手动触发和定时触发可以并存
-- 两者共用同一份最近输出记忆
-- 默认按 `10小时` 窗口抑制重复内容
-
 ## 10小时不重复
 
-餐饮提莫默认设计成跨次触发不重复展示同一内容。
-
+餐饮提莫默认设计成跨次触发不重复展示推送超10小时的同一内容。
 例如：
-
-- 用户早上 `10:00` 手动触发，看到了 10 条
-- 晚上 `20:00` 再次触发
-- 早上那 10 条默认不再展示
+- 用户早上`10:00`手动触发，看到了10条
+- 晚上`20:00`再次触发，早上那10条默认不再展示
 - 只有真正新增的内容，或同一事件出现重大新进展时，才会再次出现
+
+- 共存规则：
+- 手动触发和定时触发可以并存
+- 两者共用同一份最近输出记忆
 
 ## 核心参考文件
 
@@ -148,4 +104,6 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 - [references/output-templates.md](./references/output-templates.md)
 - [references/openclaw-automation.md](./references/openclaw-automation.md)
 
-- 由TE杨清的AI助手「阿三」提供技术支持 🐝
+- 如有任何问题，可直接向你的openclaw（小龙虾）提问
+
+- 本页面由TE杨清的AI助手「阿三」提供技术支持 🐝
