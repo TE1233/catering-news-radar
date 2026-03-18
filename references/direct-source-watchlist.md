@@ -2,7 +2,7 @@
 
 Use this file when you want direct content-entry pages that can often be fetched more reliably than broad search results.
 
-Treat these pages as starting points. They are useful for discovery and direct extraction, but still verify dates and deduplicate before output.
+Treat these pages as starting points. They are useful for discovery and direct extraction, but still verify dates, deduplicate before output, and pair them with targeted search-engine queries.
 
 ## Restaurant and Trade Media
 
@@ -108,6 +108,7 @@ For a broad daily scan:
 3. Pull at least two professional restaurant-media pages.
 4. Pull at least one property or channel page.
 5. Pull at least one business or local-services media page.
+6. Run search-engine queries across at least the regulator, platform, and brand/company buckets during the same run.
 
 Recommended daily base set:
 
@@ -132,6 +133,7 @@ For slow news days:
 - Keep the scan narrow and fresh.
 - Return fewer items rather than padding with stale material.
 - Move weak or unconfirmed items into a watchlist section.
+- Even on slow days, keep at least one targeted search-engine pass so the run does not collapse into direct-page-only fetching.
 
 ## Maintenance Notes
 

@@ -4,6 +4,13 @@ Use this file for any request involving "latest", "today", "recent", "breaking",
 
 The main job is to protect freshness. Search in layers and preserve coverage across source buckets.
 
+Every broad run must combine:
+
+- direct-page discovery from the watchlist
+- targeted search-engine queries across core buckets
+
+Do not stop after direct-page fetching alone.
+
 ## Default Search Layers
 
 ### T0: Past 24 hours
@@ -23,6 +30,7 @@ Search order:
 3. Brand official sources
 4. Fast restaurant and consumer trade media
 5. Property, channel, and supply-chain sources
+6. Targeted search-engine passes to discover missing signals and confirm exact dates across those buckets
 
 Goal:
 
@@ -46,6 +54,7 @@ Search order:
 2. Expand trade-media passes
 3. Add mall, channel, and supply-chain sources
 4. Add data-tool validation when needed
+5. Re-run targeted search-engine queries over the expanded 72-hour window
 
 Goal:
 
@@ -59,6 +68,7 @@ Stop searching within the active layer only when all are true:
 - At least 3-5 high-confidence items exist for a broad daily scan, or 2-4 for a narrow niche scan
 - At least two source types are represented
 - At least one item comes from an original source
+- At least one direct-page pass and one search-engine pass were completed
 - The result set is within the active time layer
 - All relevant core buckets have been checked at least once
 

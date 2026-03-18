@@ -88,6 +88,8 @@ Recommended behavior of the scheduled prompt:
 - Prioritize source breadth and freshness.
 - Include dates and source attribution on every item.
 - Check all core source buckets before finalizing the digest.
+- Run both direct-page checks and targeted search-engine queries during every scheduled execution.
+- Do not let the scheduled run rely on only a few direct media pages.
 - Allow repeats during the first `10 hours`, and suppress only items that remain materially unchanged after that window.
 
 ## Change the Scheduled Time
@@ -165,6 +167,12 @@ Examples of manual variants:
 - Scan the latest coffee-chain developments from the past 3 days.
 - Produce an evening brief for delivery-platform policy updates.
 - Track tea-drink brand openings, financing, and pricing moves.
+
+Manual behavior requirements:
+
+- Run direct-page checks from the watchlist.
+- Run targeted search-engine queries in the same execution.
+- Do not answer as a broad scan if only direct pages were checked.
 
 ## Recommended Product Behavior
 
