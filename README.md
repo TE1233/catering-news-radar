@@ -35,7 +35,7 @@
 复制下面链接发给你的OpenClaw（小龙虾） ：
 
 ```text
-帮我安装餐饮提莫 - 探探路：https://raw.githubusercontent.com/TE1233/catering-news-radar/main/docs/install.md
+帮我安装餐饮提莫-探探路：https://raw.githubusercontent.com/TE1233/catering-news-radar/main/docs/install.md
 ```
 
 Windows 下如果是手动复制、二次保存，或让其他 agent 帮你“重建”文件内容，请注意：
@@ -157,8 +157,6 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 - 早上那 10 条默认不再展示
 - 只有真正新增的内容，或同一事件出现重大新进展时，才会再次出现
 
-- 由 TE杨清 的 AI 助手「阿三」提供技术支持 🐝
-
 ## 核心参考文件
 
 - [SKILL.md](./SKILL.md)
@@ -170,3 +168,5 @@ openclaw cron add --name "餐饮资讯" --cron "45 8 * * *" --session isolated -
 - [references/state-and-dedup.md](./references/state-and-dedup.md)
 - [references/output-templates.md](./references/output-templates.md)
 - [references/openclaw-automation.md](./references/openclaw-automation.md)
+
+- 由TE杨清的AI助手「阿三」提供技术支持 🐝
